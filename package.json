@@ -2,7 +2,7 @@
   "name": "kapusta_project",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://yurii-rykov.github.io/Kapusta_project/",
+  "homepage": "https://yurii-rykov.github.io/kapusta_project/",
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
