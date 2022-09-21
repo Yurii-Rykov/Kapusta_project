@@ -2,63 +2,56 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import * as api from 'helpers/auth';
 
+export const handleLogin = createAsyncThunk('auth/login', async (data, { rejectWithValue }) => {
+  try {
+    return await api.login(data);
+  } catch ({ response }) {
+    return rejectWithValue(response.data);
+  }
+});
+
+export const handleLogout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+  try {
+    return api.logout();
+  } catch ({ response }) {
+    return rejectWithValue(response.data);
+  }
+});
 export const handleRegistration = createAsyncThunk(
   'auth/registration',
-  async (data, { rejectWithValue }) => {
+  async (data, { rejectWithValue, dispatch }) => {
     try {
       const register = await api.registration(data);
-      toast.success('Your registration is successful! Please log in.');
+      dispatch(handleLogin(data));
+      toast.success('Your registration is successful! You also login in app .');
       return register;
     } catch ({ response }) {
-      toast.warn('Your account is already registered');
+      if (response.status === 409) {
+        dispatch(handleLogin(data));
+      }
       return rejectWithValue(response.data);
     }
   }
 );
 
-export const handleAuthGoogle = createAsyncThunk(
-  'auth/google',
-  async (_, { rejectWithValue }) => {
-    try {
-      return await api.authGoogle();
-    } catch ({ response }) {
-      return rejectWithValue(response.data);
-    }
+export const handleAuthGoogle = createAsyncThunk('auth/google', async (_, { rejectWithValue }) => {
+  try {
+    return await api.authGoogle();
+  } catch ({ response }) {
+    return rejectWithValue(response.data);
   }
-);
-
-export const handleLogin = createAsyncThunk(
-  'auth/login',
-  async (data, { rejectWithValue }) => {
-    try {
-      return await api.login(data);
-    } catch ({ response }) {
-      return rejectWithValue(response.data);
-    }
-  }
-);
-
-export const handleLogout = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      return api.logout();
-    } catch ({ response }) {
-      return rejectWithValue(response.data);
-    }
-  }
-);
+});
 
 export const getCurrentUser = createAsyncThunk(
   'auth/currentUser',
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.accessToken;
-
       api.setToken(token);
       return await api.currentUser();
-    } catch ({ response }) {
-      return rejectWithValue(response.data);
+    } catch (error) {
+      toast.error('Unauthorized. Please login again');
+      return rejectWithValue(error);
     }
   }
 );
@@ -70,9 +63,10 @@ export const handleUpdateUserBalance = createAsyncThunk(
       const balance = await api.userBalance({ newBalance: amount });
       toast.success('Your balance was confirm');
       return balance;
-    } catch ({ response }) {
+    } catch (error) {
+      console.log('error updateUserBalance: ', error);
       toast.error('Your network is dead. Try it later');
-      return rejectWithValue(response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

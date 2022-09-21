@@ -1,5 +1,6 @@
 import { Button, ButtonTransactions } from './Button';
 import s from './ExpensesAndIncome.module.css';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import Calendar from 'components/Calendar/Calendar';
@@ -22,17 +23,11 @@ export const ExpensesAndIncome = ({ date, setDate }) => {
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
   const { data: expenseCategories } = useGetExpenseCategoriesQuery();
+  const { data: incomeCategories } = useGetIncomeCategoriesQuery();
   const [addExpense] = useAddExpenseMutation();
   const [addIncome] = useAddIncomeMutation();
   const location = useLocation();
 
-  // (undefined, {
-  //   selectFromResult: ({ data }) => {
-  //     console.log('data: ', data);
-  //     return { data: data ?? [] };
-  //   },
-  // });
-  const { data: incomeCategories } = useGetIncomeCategoriesQuery();
   let currentDate = date.toJSON().slice(0, 10);
 
   const handleChange = e => {
@@ -51,23 +46,28 @@ export const ExpensesAndIncome = ({ date, setDate }) => {
         return;
     }
   };
-
+  const buttonStatus =
+    description.length > 0 &&
+    price.length > 0 &&
+    category.length > 0 &&
+    category !== 'Product category';
   const handleSubmit = e => {
     e.preventDefault();
+    if (!buttonStatus) {
+      toast.error('Fill in all the fields');
+      return;
+    }
+    const transactionObject = {
+      description,
+      amount: Number(price),
+      date: currentDate,
+      category,
+    };
+
     if (location.pathname === '/transactions/expenses') {
-      addExpense({
-        description,
-        amount: price,
-        date: currentDate,
-        category,
-      });
+      addExpense(transactionObject);
     } else {
-      addIncome({
-        description,
-        amount: price,
-        date: currentDate,
-        category,
-      });
+      addIncome(transactionObject);
     }
     setDescription('');
     setCategory('');
