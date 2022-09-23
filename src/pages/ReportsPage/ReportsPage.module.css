@@ -8,11 +8,6 @@
     width: 480px;
   }
 }
-@media screen and (min-width: 678px) {
-  .main {
-    width: 768px;
-  }
-}
 @media screen and (min-width: 1280px) {
   .main {
     width: 1280px;
@@ -59,22 +54,22 @@
   }
 }
 
-@media screen and (max-width: 767px) {
+/* @media screen and (max-width: 767px) {
   .chart_container {
     min-height: 60px;
     margin-top: 5px;
     padding: 0;
   }
-}
+} */
 @media screen and (min-width: 768px) {
   .meta {
-    background: url('../../assets/png/tabletBottomBG.png') no-repeat bottom
-      right;
+    background: url('../../assets/png/tabletBottomBG.png') no-repeat;
+    background-position: bottom 0 right 40px;
   }
 
   .main {
     width: 768px;
-    padding: 40px 40px;
+    padding: 40px 32px;
   }
   .item:not(:last-child) {
     margin-right: 30px;
@@ -90,9 +85,7 @@
   }
   .chart_container {
     height: 399px;
-    padding: 0 25px;
-
-    padding-top: 10px;
+    padding: 22px 35px;
 
     background: #ffffff;
     box-shadow: var(--shadow);
@@ -111,7 +104,6 @@
   .main {
     padding: 40px 123px;
     width: 1280px;
-    text-align: center;
   }
   .block {
     display: flex;
